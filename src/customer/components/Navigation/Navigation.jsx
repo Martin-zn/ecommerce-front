@@ -161,7 +161,8 @@ export default function Navigation() {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="bg-white">
+    // Sticky es una solucion que puse yo asi que esta a prueba
+    <div className="bg-white sticky z-[9999]">
       {/* Mobile menu */}
       <Transition show={open}>
         <Dialog className="relative z-40 lg:hidden" onClose={setOpen}>
