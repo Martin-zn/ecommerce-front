@@ -32,39 +32,39 @@ function classNames(...classes) {
 export default function Product() {
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const location=useLocation()
+  const location = useLocation()
   const navigate = useNavigate()
 
-  const handleFilter=(value, sectionId)=>{
+  const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search)
 
     let filterValue = searchParams.getAll(sectionId)
 
-    if(filterValue.length>0 && filterValue[0].split(",").includes(value)){
-        filterValue=filterValue[0].split(",").filter((item)=>item!==value);
+    if (filterValue.length > 0 && filterValue[0].split(",").includes(value)) {
+      filterValue = filterValue[0].split(",").filter((item) => item !== value);
 
-        if(filterValue.length===0){
-            searchParams.delete(sectionId)
-        }
+      if (filterValue.length === 0) {
+        searchParams.delete(sectionId)
+      }
     }
-    else{
-        filterValue.push(value)
+    else {
+      filterValue.push(value)
     }
 
-    if(filterValue.length>0){
-        searchParams.set(sectionId, filterValue.join(","));
+    if (filterValue.length > 0) {
+      searchParams.set(sectionId, filterValue.join(","));
     }
-    const query=searchParams.toString();
-    navigate({search:`?${query}`});
-}
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+  }
 
-    const handleRadioFilterChange=(e, sectionId)=>{
-        const searchParams=new URLSearchParams(location.search)
+  const handleRadioFilterChange = (e, sectionId) => {
+    const searchParams = new URLSearchParams(location.search)
 
-        searchParams.set(sectionId, e.target.value)
-        const query=searchParams.toString();
-        navigate({search:`?${query}`});
-    }
+    searchParams.set(sectionId, e.target.value)
+    const query = searchParams.toString();
+    navigate({ search: `?${query}` });
+  }
 
   return (
     <div className="bg-white">
@@ -107,7 +107,7 @@ export default function Product() {
 
                   {/* Filters */}
                   <form className="mt-4 border-t border-gray-200">
-                
+
 
                     {filters.map((section) => (
                       <Disclosure as="div" key={section.id} className="border-t border-gray-200 px-4 py-6">
@@ -228,7 +228,7 @@ export default function Product() {
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">
               {/* Filters */}
               <form className="hidden lg:block">
-                
+
                 {singleFilter.map((section) => (
                   <Disclosure as="div" key={section.id} className="border-b border-gray-200 py-6">
                     {({ open }) => (
@@ -250,7 +250,7 @@ export default function Product() {
                             {section.options.map((option, optionIdx) => (
                               <div key={option.value} className="flex items-center">
                                 <input
-                                onChange={()=>handleFilter(option.value, section.id)}
+                                  onChange={() => handleFilter(option.value, section.id)}
                                   id={`filter-${section.id}-${optionIdx}`}
                                   name={`${section.id}[]`}
                                   defaultValue={option.value}
@@ -277,7 +277,7 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
                 <div className='flex flex-wrap justify-center bg-white py-5'>
-                    {productExample.map((item)=><ProductCard product={item}/>)}
+                  {productExample.map((item) => <ProductCard product={item} />)}
                 </div>
 
               </div>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { Radio, RadioGroup } from '@headlessui/react'
 import { Button, Rating } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 const product = {
   name: 'Basic Tee 6-Pack',
@@ -77,6 +78,11 @@ function classNames(...classes) {
 export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+  const navigate = useNavigate();
+
+  const handleAddToCart = ()=>{
+    navigate("/cart")
+  };
 
   return (
     <div className="bg-white">
@@ -228,7 +234,7 @@ export default function ProductDetails() {
                     </RadioGroup>
                   </fieldset>
                 </div>
-                <Button variant="contained" sx={{px:"2rem",py:"1rem"}}>
+                <Button onClick={handleAddToCart} variant="contained" sx={{px:"2rem",py:"1rem"}}>
                   Agregar al carrito
                 </Button>
 
