@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import {
   Dialog,
   DialogPanel,
@@ -15,7 +15,13 @@ import {
   TransitionChild,
 } from '@headlessui/react'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import AuthModel from '../../Auth/AuthModel'
+import { Avatar, Button, Menu, MenuItem } from '@mui/material'
+import { useDispatch, useSelector  } from 'react-redux'
+import { getUser, logout } from '../../../State/Auth/Action'
+
+
 
 const navigation = {
   categories: [
@@ -140,6 +146,8 @@ const navigation = {
   ],
 }
 
+
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -148,9 +156,52 @@ export default function Navigation() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate();
 
+  const[openAuthModel, setOpenAuthModal] = useState(false);
+  const[anchorEl, setAnchorEl] = useState(null);
+  const openUserMenu = Boolean(anchorEl);
+  const jwt = localStorage.getItem("jwt");
+  const {auth}=useSelector(store=>store);
+  const dispatch = useDispatch();
+  const location = useLocation();
+
   const handleCategoryClick = (category, section, item, close) => {
     navigate(`/${category.id}/${section.id}/${item.id}`);
     close();
+  }
+
+  const handleUserClick = (event) =>{
+    setAnchorEl(event.currentTarget);
+  }
+  const handleCloseUserMenu = (event) =>{
+    setAnchorEl(null);
+  }
+
+  const handleOpen = () =>{
+    setOpenAuthModal(true);
+  }
+  const handleClose = () =>{
+    setOpenAuthModal(false);
+
+  }
+
+  useEffect(()=>{
+    if(jwt){
+      dispatch(getUser(jwt))
+    }
+  }, [jwt, auth.jwt])
+
+  useEffect(()=>{
+    if(auth.user){
+      setOpenAuthModal(false);
+    }
+    if(location.pathname === "/login" || location.pathname === "/register"){
+      navigate(-1)
+    }
+  },[auth.user])
+
+  const handleLogout=()=>{
+    dispatch(logout())
+    handleCloseUserMenu()
   }
 
 
@@ -267,11 +318,15 @@ export default function Navigation() {
                 </div>
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+
+
                   <div className="flow-root">
                     <a href="#" className="-m-2 block p-2 font-medium text-gray-900">
-                      Sign in
+                      Registrarse
                     </a>
                   </div>
+
+
                   <div className="flow-root">
                     <a href="#" className="-m-2 block p-2 font-medium text-gray-900">
                       Create account
@@ -297,8 +352,8 @@ export default function Navigation() {
       </Transition>
 
       <header className="relative bg-white">
-        <p className="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
-          Get free delivery on orders over $100
+        <p className="flex h-10 items-center justify-center bg-black px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
+          Aqui va un descuento
         </p>
 
         <nav aria-label="Top" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -320,8 +375,8 @@ export default function Navigation() {
                   <span className="sr-only">Your Company</span>
                   <img
                     className="h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                    alt=""
+                    src="https://img.freepik.com/vector-gratis/fondo-plano-dia-san-valentin_52683-157845.jpg?t=st=1717165510~exp=1717169110~hmac=053ae258e1b8602d32f8f5cf64b66085e9d0a0881f2942551669af8f692cafb1&w=996"
+                    alt="introducir un alt"
                   />
                 </a>
               </div>
@@ -427,15 +482,39 @@ export default function Navigation() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Sign in
-                  </a>
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <a href="#" className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                    Create account
-                  </a>
-                </div>
+                  {auth.user?.username ? (
+                    <div>
 
+                      <Avatar
+                       className='text-white' 
+                       onClick={handleUserClick} 
+                       aria-controls={open ? "basic-menu" : undefined} 
+                       aria-haspopup="true" 
+                       aria-expanded={open ? "true" : undefined} 
+                       sx={{bgcolor:'black', color: "white", cursor: "pointer"}}>
+                        {auth.user?.username[0].toUpperCase()}
+                      </Avatar>
+
+                      <Menu id='basic-menu' anchorEl={anchorEl} open={openUserMenu} onClose={handleCloseUserMenu} MenuListProps={{"aria-labelledby" : "basic-button",}}>
+                      
+                        <MenuItem onClick={handleCloseUserMenu}>
+                        Perfil
+                        </MenuItem>
+                        <MenuItem onClick={()=>navigate("/account/order")}>
+                        Mi pedido
+                        </MenuItem>
+                        <MenuItem onClick={handleLogout}>
+                        Cerrar sesion
+                        </MenuItem>
+
+                      </Menu>
+                    </div>
+                      ) : (
+                      <Button className="text-sm font-medium text-gray-700 hover:text-gray-800" onClick={handleOpen}>
+                        Ingresar
+                      </Button>
+              )}
+              </div>
                 {/* <div className="hidden lg:ml-8 lg:flex">
                   <a href="#" className="flex items-center text-gray-700 hover:text-gray-800">
                     <img
@@ -449,12 +528,12 @@ export default function Navigation() {
                 </div> */}
 
                 {/* Search */}
-                <div className="flex lg:ml-6">
+                {/* <div className="flex lg:ml-6">
                   <a href="#" className="p-2 text-gray-400 hover:text-gray-500">
                     <span className="sr-only">Search</span>
                     <MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
                   </a>
-                </div>
+                </div> */}
 
                 {/* Cart */}
                 <div className="ml-4 flow-root lg:ml-6">
@@ -472,6 +551,8 @@ export default function Navigation() {
           </div>
         </nav>
       </header>
+      <AuthModel handleClose={handleClose} open={openAuthModel}/>
+
     </div>
   )
 }
