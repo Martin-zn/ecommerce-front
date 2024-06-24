@@ -1,5 +1,5 @@
 
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import {
   Dialog,
   DialogPanel,
@@ -18,7 +18,11 @@ import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from
 import { productExample } from '../../../Data/productExample'
 import ProductCard from './ProductCard'
 import { estilo, filters, singleFilter } from './FilterData'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Sort } from '@mui/icons-material'
+import { useDispatch, useSelector } from 'react-redux'
+import { findProducts } from '../../../State/Product/Action'
+import Pagination from '@mui/material/Pagination';
 
 const sortOptions = [
   { name: 'Price: Low to High', href: '#', current: false },
@@ -34,6 +38,22 @@ export default function Product() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
+  const param = useParams()
+  const dispatch = useDispatch();
+  const {products}=useSelector(store=>store)
+
+
+  console.log("products: ",products)
+  // console.log(product.products)
+  // console.log(product.products[0])
+
+
+  const decodedQueryString = decodeURIComponent(location.search);
+  const searchParams = new URLSearchParams(decodedQueryString);
+  const priceValue = searchParams.get("price")
+  const sortValue = searchParams.get("sort")
+  const pageNumber = searchParams.get("page")
+  const estilo = searchParams.get("estilo")
 
   const handleFilter = (value, sectionId) => {
     const searchParams = new URLSearchParams(location.search)
@@ -65,6 +85,36 @@ export default function Product() {
     const query = searchParams.toString();
     navigate({ search: `?${query}` });
   }
+
+  const handlePaginationChange=(value)=>{
+    const searchParams = new URLSearchParams(location.search)
+    searchParams.set("page", value);
+    const query = searchParams.toString();
+    navigate({search:`${query}`})
+  }
+
+  useEffect(() => {
+    const [minPrice, maxPrice] = priceValue === null ? [0, 0] : priceValue.split("-").map(Number);
+
+    const data = {
+      category: param.lavelThree,
+      minPrice:0,
+      maxPrice:999999999999999999,
+      sort: sortValue || "price_low",
+      pageNumber: pageNumber - 1,
+      pageSize: 10,
+    }
+
+    dispatch(findProducts(data))
+
+  }, [param.lavelThree,
+    priceValue,
+    estilo,
+    sortValue,
+    pageNumber
+  ])
+
+
 
   return (
     <div className="bg-white">
@@ -160,7 +210,7 @@ export default function Product() {
 
         <main className="mx-auto px-4 sm:px-6 lg:px-20">
           <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">New Arrivals</h1>
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900">EVENTOS</h1>
 
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
@@ -277,10 +327,16 @@ export default function Product() {
               {/* Product grid */}
               <div className="lg:col-span-4 w-full">
                 <div className='flex flex-wrap justify-center bg-white py-5'>
-                  {productExample.map((item) => <ProductCard product={item} />)}
+                  {products.products && products.products?.map((item) => <ProductCard product={item} />)}
                 </div>
 
               </div>
+            </div>
+          </section>
+          <section className='w-full px=[3.6rem]'>
+            <div className='px-4 py-5 flex justify-center'>
+            <Pagination count={products.products?.totalPages} onChange={handlePaginationChange} />
+
             </div>
           </section>
         </main>

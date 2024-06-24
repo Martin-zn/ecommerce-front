@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { Radio, RadioGroup } from '@headlessui/react'
 import { Button, Rating } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { findProductsById } from '../../../State/Product/Action'
+import { addItemToCart } from '../../../State/Cart/Action'
 
 const product = {
   name: 'Basic Tee 6-Pack',
@@ -76,13 +79,28 @@ function classNames(...classes) {
 }
 
 export default function ProductDetails() {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0])
-  const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+  // const [selectedColor, setSelectedColor] = useState(product.colors[0])
+  // const [selectedSize, setSelectedSize] = useState(product.sizes[2])
   const navigate = useNavigate();
+  const params = useParams();
+  const dispatch = useDispatch();
+  const {products} = useSelector(store=>store);
 
-  const handleAddToCart = ()=>{
+
+  useEffect(() => {
+    const data = { productId: params.productId }
+
+    dispatch(findProductsById(data))
+
+  }, [params.productId])
+
+  const handleAddToCart = () => {
+    const data = {productId:params.productId}
+    console.log(data)
+    dispatch(addItemToCart(data))
     navigate("/cart")
   };
+
 
   return (
     <div className="bg-white">
@@ -109,8 +127,8 @@ export default function ProductDetails() {
               </li>
             ))}
             <li className="text-sm">
-              <a href={product.href} aria-current="page" className="font-medium text-gray-500 hover:text-gray-600">
-                {product.name}
+              <a href={products.product?.imageUrl} aria-current="page" className="font-medium text-gray-500 hover:text-gray-600">
+                {products.product?.name}
               </a>
             </li>
           </ol>
@@ -122,56 +140,56 @@ export default function ProductDetails() {
           <div className="flex flex-col items-center">
             <div className="overflow-hidden rounded-lg max-w-[30rem] max-h-[35rem]">
               <img
-                src={product.images[0].src}
-                alt={product.images[0].alt}
+                src={products.product?.imageUrl ? products.product?.imageUrl : 'https://lafabricadelschablon.com.ar/wp-content/themes/urutienda/img/default.png'}
+                alt={"#"}
                 className="h-full w-full object-cover object-center"
               />
             </div>
-            <div className="flex flex-wrap space-x-5 justify-center">
+            {/* <div className="flex flex-wrap space-x-5 justify-center">
 
-              {product.images.map((item)=>
-              <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-l max-w-[5rem] max-h-[5rem] mt-4">
-                <img
-                  src={item.src}
-                  alt={item.alt}
-                  className="h-full w-full object-cover object-center"
-                />
-              </div>)}
+              {product.images.map((item) =>
+                <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-l max-w-[5rem] max-h-[5rem] mt-4">
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>)}
 
 
-            </div>
+            </div> */}
           </div>
 
           {/* Product info */}
           <div className="lg:col-span-1 max-auto max-w-2x1 px-4 pb-16 sm:px-6 lg:max-w-7x1 lg:px-8 lg:pb-24">
             <div className="lg:col-span-2">
-              <h1 className="text-lg lg:text-xl font-semibold text-gray-900">Titulo de prueba</h1>
-              <h1 className="text-lg lg:text-xl text-gray-900 opacity-60 pt-1">Titulo de prueba</h1>
+              <h1 className="text-lg lg:text-xl font-semibold text-gray-900">{products.product?.brand}</h1>
+              <h1 className="text-lg lg:text-xl text-gray-900 opacity-60 pt-1">{products.product?.name}</h1>
             </div>
 
             {/* Options */}
             <div className="mt-4 lg:row-span-3 lg:mt-0">
-              <h2 className="sr-only">Product information</h2>
+              <h2 className="sr-only">{products.product?.longDescription}</h2>
 
               {/* Price */}
               <div className="flex space-x-5 items-center text-lg lg:text-xl text-gray-900 mt-6">
-                <p className='font-semibold'>$50.000</p>
-                <p className='font-semibold opacity-50 line-trhough'>$50.000</p>
-                <p className='font-semibold text-green-600'>$50.000</p>
+                <p className='font-semibold'>${products.product?.price}</p>
+                {/* <p className='font-semibold opacity-50 line-trhough'>$50.000</p>
+                <p className='font-semibold text-green-600'>$50.000</p> */}
               </div>
 
               {/* Reviews */}
-              <div className="mt-6">
+              {/* <div className="mt-6">
                 <div className='flex items-center space-x-3'>
                   <Rating name="read-only" value={4} readOnly />
                   <p className='opacity-50 text-sm'>5 Ratings</p>
                 </div>
-              </div>
+              </div> */}
 
               <form className="mt-10">
 
                 {/* Sizes */}
-                <div className="mt-10">
+                {/* <div className="mt-10">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-medium text-gray-900">Size</h3>
                     <a href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
@@ -233,8 +251,8 @@ export default function ProductDetails() {
                       ))}
                     </RadioGroup>
                   </fieldset>
-                </div>
-                <Button onClick={handleAddToCart} variant="contained" sx={{px:"2rem",py:"1rem"}}>
+                </div> */}
+                <Button onClick={handleAddToCart} variant="contained" sx={{ px: "2rem", py: "1rem" }}>
                   Agregar al carrito
                 </Button>
 
@@ -244,14 +262,14 @@ export default function ProductDetails() {
             <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pb-16 lg:pr-8 lg:pt-6">
               {/* Description and details */}
               <div>
-                <h3 className="sr-only">Description</h3>
+                <h3 className="sr-only">Descripcion</h3>
 
                 <div className="space-y-6">
-                  <p className="text-base text-gray-900">{product.description}</p>
+                  <p className="text-base text-gray-900">{products.product?.longDescription}</p>
                 </div>
               </div>
 
-              <div className="mt-10">
+              {/* <div className="mt-10">
                 <h3 className="text-sm font-medium text-gray-900">Highlights</h3>
 
                 <div className="mt-4">
@@ -263,15 +281,15 @@ export default function ProductDetails() {
                     ))}
                   </ul>
                 </div>
-              </div>
+              </div> */}
 
-              <div className="mt-10">
+              {/* <div className="mt-10">
                 <h2 className="text-sm font-medium text-gray-900">Details</h2>
 
                 <div className="mt-4 space-y-6">
                   <p className="text-sm text-gray-600">{product.details}</p>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 

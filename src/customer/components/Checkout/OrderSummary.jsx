@@ -1,9 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import AddressCard from '../AddressCard/AddressCard'
 import { Button } from '@mui/material'
 import CartItem from '../Cart/CartItem'
+import { useDispatch, useSelector } from 'react-redux'
+import { getOrderById } from '../../../State/Order/Action'
+import { useLocation } from 'react-router-dom'
 
 const OrderSummary = () => {
+
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const orderId = searchParams.get("order_id")
+    const {order} = useSelector(store=>store) 
+
+    useEffect(()=>{
+        dispatch(getOrderById(orderId))
+    },[orderId])
+
   return (
     <div>
         <div className='p-5 shadow-lg rounded-s-md border'>
@@ -13,7 +27,7 @@ const OrderSummary = () => {
         <div>
         <div className='lg:grid grid-cols-3 lg:px-16 lg:py-16 relative'>
             <div className='col-span-2'>
-                {[1,1,1,1].map((item)=><CartItem/>)}
+                {order.order?.orderItems.map((item)=><CartItem item={item}/>)}
                 
             </div>
         <div className='px-5 sticky top-0 h-[100vh] mt-5 lg:mt-0'>
@@ -22,16 +36,16 @@ const OrderSummary = () => {
                 <hr/>
                 <div className='space-y-3 font-semibold mb-10'>
                     <div className='flex justify-between pt-3 text-black'>
-                        <span>Price</span>
-                        <span>$5.000</span>
+                        <span>Precio</span>
+                        <span>${order.order?.totalPrice}</span>
                     </div>
                     <div className='flex justify-between pt-3 text-black'>
-                        <span>Price</span>
-                        <span>$5.000</span>
+                        <span>Descuento</span>
+                        <span>0</span>
                     </div>
                     <div className='flex justify-between pt-3 text-black font-bold'>
                         <span>Total</span>
-                        <span>$5.000</span>
+                        <span>${order.order?.totalPrice}</span>
                     </div>
 
                     
