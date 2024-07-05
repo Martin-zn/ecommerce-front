@@ -140,7 +140,7 @@ export default function ProductDetails() {
           <div className="flex flex-col items-center">
             <div className="overflow-hidden rounded-lg max-w-[30rem] max-h-[35rem]">
               <img
-                src={products.product?.imageUrl ? products.product?.imageUrl : 'https://lafabricadelschablon.com.ar/wp-content/themes/urutienda/img/default.png'}
+                src={products.product?.imageUrl ? products.product?.imageUrl : 'https://t3.ftcdn.net/jpg/02/54/26/14/240_F_254261417_IszNrQI6NfV7PUYbMYE3yYZJhqZjVfFd.jpg'}
                 alt={"#"}
                 className="h-full w-full object-cover object-center"
               />

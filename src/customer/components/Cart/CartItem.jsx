@@ -25,7 +25,7 @@ const CartItem = ({item}) => {
         <div className='flex items-center}'>
 
             <div className='w-[5rem] h-[5rem] lg:w-[9rem] lg:h-[9rem] '>
-                <img className='w-full h-full object-cover object-top' src={item.product.imageUrl ? item.product.imageUrl : 'https://www.shutterstock.com/shutterstock/photos/2447964221/display_1500/stock-vector-cartoon-retro-cheeseburger-groovy-character-waving-hand-and-showing-tongue-isolated-vector-tasty-2447964221.jpg'} alt="product" />
+                <img className='w-full h-full object-cover object-top' src={item.product.imageUrl ? item.product.imageUrl : 'https://t3.ftcdn.net/jpg/02/54/26/14/240_F_254261417_IszNrQI6NfV7PUYbMYE3yYZJhqZjVfFd.jpg'} alt="product" />
             </div>
             <div className='ml-5 space-y-1'>
                 <p className='fond-semibold'>{item.product.name}</p>

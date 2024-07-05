@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
             <div className='h-[20rem]'>
                 <img
                     className='h-full w-full object-cover object-left-top'
-                    src={product.imageUrl ? product.imageUrl : 'https://lafabricadelschablon.com.ar/wp-content/themes/urutienda/img/default.png'}
+                    src={product.imageUrl ? product.imageUrl : 'https://as1.ftcdn.net/v2/jpg/01/22/82/70/1000_F_122827044_LSxvWrDHRSSwETHmhMboUzdanyjtNN2Y.jpg'}
                     alt="product"
                 />
             </div>
